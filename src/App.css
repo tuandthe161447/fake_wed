@@ -1,0 +1,77 @@
+body {
+  background-image: url(./component/css/b1-scaled.jpg) ;
+  background-size: cover;
+}
+.link_header {
+  font-weight: bold;
+}
+.link_header a:hover{
+  color: antiquewhite;
+}
+
+
+
+.container-1{
+  width: 200px;
+  vertical-align: middle;
+  white-space: nowrap;
+  position: relative;
+}
+
+.container-1 input#search{
+  width: 200px;
+  height: 20px;
+  background: #2b303b;
+  border: none;
+  font-size: 10pt;
+  float: left;
+  color: #63717f;
+  padding-left: 45px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 50px;
+}
+.container-1 input#search::-webkit-input-placeholder {
+  color: #65737e;
+}
+.container-1 input#search:-moz-placeholder { /* Firefox 18- */
+  color: #65737e;  
+}
+.container-1 input#search::-moz-placeholder {  /* Firefox 19+ */
+  color: #65737e;  
+}
+.container-1 input#search:-ms-input-placeholder {  
+  color: #65737e;  
+}
+.container-1 .icon{
+  position: absolute;
+  top: -10px;
+  margin-left: 15px;
+  margin-top: 15px;
+  z-index: 1;
+  color: #4f5b66;
+  cursor :pointer
+}
+.container-1 input#search:hover, .container-1 input#search:focus, .container-1 input#search:active{
+  outline:none;
+  background: #ffffff;
+}
+.container-1 input#search{
+  width: 200px;
+  height: 30px;
+  background: #2b303b;
+  border: none;
+  font-size: 10pt;
+  float: left;
+  color: #262626;
+  padding-left: 45px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 50px;
+  
+    -webkit-transition: background .55s ease;
+  -moz-transition: background .55s ease;
+  -ms-transition: background .55s ease;
+  -o-transition: background .55s ease;
+  transition: background .55s ease;
+}
