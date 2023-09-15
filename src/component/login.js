@@ -1,102 +1,135 @@
+import { useState, useEffect } from "react";
+
+import { useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 const Login = () => {
-    return ( 
-        <div class="container" id="container">
-      <div class="form-container register-container">
-        <form>
-          <h1>Register here</h1>
-          <div class="form-control">
-            <input type="text" id="username" placeholder="Name" />
-            <small id="username-error"></small>
-            <span></span>
-          </div>
-          <div class="form-control">
-            <input type="email" id="email" placeholder="Email" />
-            <small id="email-error"></small>
-            <span></span>
-          </div>
-          <div class="form-control">
-            <input type="password" id="password" placeholder="Password" />
-            <small id="password-error"></small>
-            <span></span>
-          </div>
-          <button type="submit" value="submit">Register</button>
-          <span>or use your account</span>
-          <div class="social-container">
-            <a href="#" class="social"
-              ><i class="fa-brands fa-facebook-f"></i
-            ></a>
-            <a href="#" class="social"><i class="fa-brands fa-google"></i></a>
-            <a href="#" class="social"><i class="fa-brands fa-tiktok"></i></a>
-          </div>
-        </form>
-      </div>
 
-      <div class="form-container login-container">
-        <form class="form-lg">
-          <h1>Login here.</h1>
-          <div class="form-control2">
-            <input type="email" class="email-2" placeholder="Email" />
-            <small class="email-error-2"></small>
-            <span></span>
-          </div>
-          <div class="form-control2">
-            <input type="password" class="password-2" placeholder="Password" />
-            <small class="password-error-2"></small>
-            <span></span>
-          </div>
+    const [email, setEmail] = useState('');
+    const [passWord, setPassWord] = useState('');
+    const [users, setUsers] = useState([]);
+    const navigate = useNavigate()
 
-          <div class="content">
-            <div class="checkbox">
-              <input type="checkbox" name="checkbox" id="checkbox" />
-              <label for="">Remember me</label>
-            </div>
-            <div class="pass-link">
-              <a href="#">Forgot password</a>
-            </div>
-          </div>
-          <button type="submit" value="submit">Login</button>
-          <span>Or use your account</span>
-          <div class="social-container">
-            <a href="#" class="social"
-              ><i class="fa-brands fa-facebook-f"></i
-            ></a>
-            <a href="#" class="social"><i class="fa-brands fa-google"></i></a>
-            <a href="#" class="social"><i class="fa-brands fa-tiktok"></i></a>
-          </div>
-        </form>
-      </div>
+    useEffect(() => {
+        sessionStorage.clear();
+    }, []);
 
-      <div class="overlay-container">
-        <div class="overlay">
-          <div class="overlay-panel overlay-left">
-            <h1 class="title">
-              Hello <br />
-              friends
-            </h1>
-            <p>If you have an account, login here and have fun</p>
-            <button class="ghost" id="login">
-              Login
-              <i class="fa-solid fa-arrow-left"></i>
-            </button>
-          </div>
 
-          <div class="overlay-panel overlay-right">
-            <h1 class="title">
-              Start your <br />
-              journey now
-            </h1>
-            <p>
-              If you don'n have an account yet, join us and start your journey
-            </p>
-            <button class="ghost" id="register">
-              Register
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
+    useEffect(() => {
+
+        fetch(" http://localhost:9999/users").then((res) => res.json())
+            .then((data) => {
+                setUsers(data)
+            }).catch(err => {
+                console.log(err.message)
+            })
+    }, [])
+
+    const ProceedLogin = (e) => {
+        e.preventDefault();
+        if (validate()) {
+
+            let temp = [...users];
+            let currentUser = temp.filter(user => user.email === email)
+            
+            if (currentUser.length == 0 || currentUser === undefined) {
+                toast.error('Email does not exist! ')
+                setPassWord('')
+            } else {
+                fetch("http://localhost:9999/users/" + currentUser[0].id).then((res) => {
+
+                    return res.json();
+                }).then((resp) => {
+
+                    if (Object.keys(resp).length === 0) {
+                        toast.error('Please Enter valid email');
+                    } else {
+                        if (resp.passWord === passWord) {
+                            toast.success('Success');
+                            sessionStorage.setItem('email', email);
+                            sessionStorage.setItem('userrole', resp.rId);
+                            sessionStorage.setItem('uName',resp.uName);
+                            sessionStorage.setItem('uid',resp.id)
+
+                            navigate('/')
+                            window.location.reload();
+                        } else {
+                            setPassWord('')
+                            toast.error('Please Enter valid credentials');
+                        }
+                    }
+                }).catch((err) => {
+                    toast.error('Login Failed due to :' + err.message);
+                });
+            }
+        }
+        
+    }
+
+    
+    const validate = () => {
+        let result = true;
+        if (email === '' || email === null) {
+            result = false;
+            toast.warning('Please Enter email');
+        }
+        if (passWord === '' || passWord === null) {
+            result = false;
+            toast.warning('Please Enter Password');
+        }
+        return result;
+    }
+
+
+
+
+    return (
+        <div className="background_login d-flex justify-content-center align-items-center " >
+            <ToastContainer />
+
+           
+            <form style={{ backgroundColor: 'white', marginTop: '70px', padding: '120px', borderRadius: '20px' }} onSubmit={ProceedLogin }>
+                <h1 style={{ textAlign: 'center', paddingBottom: '30px', textTransform: 'uppercase' , fontSize: '60px', cursor:'default'}}>
+                    Login
+                </h1>
+                <div className="form-outline mb-4">
+                    <label className="form-label" for="form2Example1">Email address</label>
+                    <input type="email" id="form2Example1" class="form-control"
+                        value={email} onChange={e => setEmail(e.target.value)} />
+
+                </div>
+
+
+                <div className="form-outline mb-4">
+                    <label class="form-label" for="form2Example2" >Password</label>
+                    <input type="password" id="form2Example2" class="form-control"
+                        value={passWord} onChange={e => setPassWord(e.target.value)} />
+
+                </div>
+
+
+                <div className="row mb-4">
+                    <div class="col d-flex justify-content-center">
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
+                            <label class="form-check-label" for="form2Example31"> Remember me </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" className="btn btn-primary btn-block mb-4" >Sign in</button>
+
+
+                <div className="text-center">
+                    <p>Not a member? <a href="/Sign_up">Register</a></p>
+                    <a href="#!">Forgot password?</a>
+                </div>
+            </form>
+
         </div>
-      </div>
-    </div>
-     );
+    );
 }
 
 export default Login;
